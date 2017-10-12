@@ -1,16 +1,17 @@
 {
-  "name": "react-informal",
+  "name": "react-formit",
   "version": "v0.0.1",
-  "description": "Super simple and highly informal react form.",
-  "main": "dist/informal.js",
+  "description": "Super simple and super flexible React form.",
+  "main": "dist/formit.js",
   "scripts": {
     "prepublish": "npm run build",
-    "build": "npm test && npm run build:clean && npm run build:dist && npm run build:flow",
+    "build":
+      "npm test && npm run build:clean && npm run build:dist && npm run build:flow",
     "build:clean": "rimraf dist",
     "build:dist": "babel -d dist src --ignore '**/__tests__/**'",
     "build:flow": "flow-copy-source -v -i '**/__tests__/**' src dist"
   },
-  "repository": "git@github.com:stianba/react-informal.git",
+  "repository": "git@github.com:stianba/react-formit.git",
   "author": "Stian Bakkane <stianba@gmail.com>",
   "license": "MIT",
   "dependencies": {
