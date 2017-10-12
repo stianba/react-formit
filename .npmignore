@@ -1,0 +1,10 @@
+src
+example
+coverage
+docs
+__tests__
+.babelrc
+.travis.yml
+.gitignore
+webpack.config.babel.js
+webpack.config.production.babel.js
