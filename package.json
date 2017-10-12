@@ -5,7 +5,8 @@
   "main": "dist/formit.js",
   "scripts": {
     "prepublish": "npm run build",
-    "build": "npm test && npm run build:clean && npm run build:dist && npm run build:flow",
+    "build":
+      "npm test && npm run build:clean && npm run build:dist && npm run build:flow",
     "build:clean": "rimraf dist",
     "build:dist": "babel -d dist src --ignore '**/__tests__/**'",
     "build:flow": "flow-copy-source -v -i '**/__tests__/**' src dist"

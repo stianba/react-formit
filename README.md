@@ -11,9 +11,6 @@ $ yarn add react-formit
 ```javascript
 import Formit from 'react-formit';
 
-const locale = "no";
-const localization = vasadu(localizationData, locale);
-
 const App = () => (
   <Formit
     action="/post-that-form"
