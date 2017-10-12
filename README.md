@@ -1,1 +1,3 @@
-# react-informal
+# react-formit
+
+Super simple and super flexible React form.
