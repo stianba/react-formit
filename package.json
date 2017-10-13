@@ -1,6 +1,6 @@
 {
   "name": "react-formit",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Super simple and super flexible React form.",
   "main": "dist/formit.js",
   "scripts": {
