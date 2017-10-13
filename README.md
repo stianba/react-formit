@@ -15,6 +15,7 @@ const App = () => (
   <Formit
     action="/post-that-form"
     hiddenFields={[{ name: 'hiddenValue', value: 'Woo, secret' }]}
+    responseAsJSON
   >
     {({
       onSubmit,
@@ -26,18 +27,23 @@ const App = () => (
       responseData
     }) => (
       <form onSubmit={onSubmit}>
+        <label for="username">Username:</label>
         <input
           type="text"
-          name="username"
+          id="username"
           onChange={e => setValue('username', e.target.value)}
           value={getValue('username')}
         />
+        <label for="password">Password:</label>
         <input
           type="password"
-          name="password"
+          id="password"
           onChange={e => setValue('password', e.target.value)}
           value={getValue('password')}
         />
+        <Button type="submit">Submit</Button>
+        <Button onClick={clearValues}>Cancel</Button>
+        {responseData !== null && <p>{responseData.mySuccessMessage}</p>}
       </form>
     )}
   </Formit>
