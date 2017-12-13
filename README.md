@@ -15,6 +15,12 @@ const App = () => (
   <Formit
     action="/post-that-form"
     hiddenFields={[{ name: 'hiddenValue', value: 'Woo, secret' }]}
+    headers={[
+      {
+        Authorization:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ'
+      }
+    ]}
     responseAsJSON
   >
     {({

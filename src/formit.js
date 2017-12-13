@@ -34,10 +34,15 @@ type HiddenField = {
   value: Value
 };
 
+type Header = {
+  [key: string]: string
+};
+
 type Props = {
   action: string,
   responseAsJSON?: boolean,
   hiddenFields?: Array<HiddenField>,
+  headers?: Array<Header>,
   children: FormitInterface => React.Node
 };
 
@@ -111,12 +116,15 @@ class Formit extends React.Component<Props, State> {
   };
 
   submit: submit = async e => {
-    const { action, responseAsJSON } = this.props;
+    const { action, headers, responseAsJSON } = this.props;
     const { posting, fields } = this.state;
+
     const formData = new FormData();
+    const head = new Headers();
     let responseData: ResponseData;
 
     e.preventDefault();
+
     if (posting) return false;
     this.setState({ posting: true, postingError: null, responseData: null });
 
@@ -124,8 +132,20 @@ class Formit extends React.Component<Props, State> {
       formData.append(f.name, f.value);
     });
 
+    if (headers) {
+      headers.forEach(h => {
+        for (let p in h) {
+          head.append(p, h[p]);
+        }
+      });
+    }
+
     try {
-      const response = await fetch(action, { method: 'POST', body: formData });
+      const response = await fetch(action, {
+        method: 'POST',
+        headers: head,
+        body: formData
+      });
 
       if (responseAsJSON) {
         responseData = await response.json();
