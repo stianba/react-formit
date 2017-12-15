@@ -1,4 +1,5 @@
 // @flow
+import 'babel-polyfill';
 import * as React from 'react';
 
 type Value = string | Blob;
