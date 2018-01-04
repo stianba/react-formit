@@ -75,17 +75,18 @@ class Formit extends React.Component<Props, State> {
   };
 
   componentWillMount() {
-    this.setDefaults();
+    const { hiddenFields, defaultValues } = this.props;
+    this.setDefaults(hiddenFields, defaultValues);
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    const { hiddenFields, defaultValues } = this.props;
-    this.setDefaults();
+    this.setDefaults(nextProps.hiddenFields, nextProps.defaultValues);
   }
 
-  setDefaults = () => {
-    const { hiddenFields, defaultValues } = this.props;
-
+  setDefaults = (
+    hiddenFields?: Array<HiddenField>,
+    defaultValues?: Array<DefaultField>
+  ) => {
     if (hiddenFields && hiddenFields.length > 0) {
       const fields = hiddenFields.map(f =>
         Object.assign({}, f, { error: null })
