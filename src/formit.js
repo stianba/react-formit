@@ -75,6 +75,14 @@ class Formit extends React.Component<Props, State> {
   };
 
   componentWillMount() {
+    this.setDefaults();
+  }
+
+  componentWillUpdate() {
+    this.setDefaults();
+  }
+
+  setDefaults = () => {
     const { hiddenFields, defaultValues } = this.props;
 
     if (hiddenFields && hiddenFields.length > 0) {
@@ -92,7 +100,7 @@ class Formit extends React.Component<Props, State> {
 
       this.setState({ fields });
     }
-  }
+  };
 
   setValue: setValue = (fieldName, value) => {
     const { posting, fields } = this.state;
