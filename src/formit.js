@@ -35,6 +35,11 @@ type HiddenField = {
   value: Value
 };
 
+type DefaultField = {
+  name: string,
+  value: Value
+};
+
 type Header = {
   [key: string]: string
 };
@@ -43,6 +48,7 @@ type Props = {
   action: string,
   responseAsJSON?: boolean,
   hiddenFields?: Array<HiddenField>,
+  defaultValues?: Array<DefaultField>,
   headers?: Array<Header>,
   children: FormitInterface => React.Node
 };
@@ -68,10 +74,18 @@ class Formit extends React.Component<Props, State> {
   };
 
   componentWillMount() {
-    const { hiddenFields } = this.props;
+    const { hiddenFields, defaultValues } = this.props;
 
     if (hiddenFields && hiddenFields.length > 0) {
       const fields = hiddenFields.map(f =>
+        Object.assign({}, f, { error: null })
+      );
+
+      this.setState({ fields });
+    }
+
+    if (defaultValues && defaultValues.length > 0) {
+      const fields = defaultValues.map(f =>
         Object.assign({}, f, { error: null })
       );
 
