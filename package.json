@@ -9,7 +9,8 @@
       "npm test && npm run build:clean && npm run build:dist && npm run build:flow",
     "build:clean": "rimraf dist",
     "build:dist": "babel -d dist src --ignore '**/__tests__/**'",
-    "build:flow": "flow-copy-source -v -i '**/__tests__/**' src dist"
+    "build:flow": "flow-copy-source -v -i '**/__tests__/**' src dist",
+    "dev": "parcel example/index.html"
   },
   "repository": "git@github.com:stianba/react-formit.git",
   "author": "Stian Bakkane <stianba@gmail.com>",
@@ -25,6 +26,7 @@
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-preset-env": "^1.6.0",
     "flow-copy-source": "^1.2.1",
+    "parcel-bundler": "^1.4.1",
     "rimraf": "^2.6.2"
   }
 }
