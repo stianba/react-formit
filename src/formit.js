@@ -78,8 +78,15 @@ class Formit extends React.Component<Props, State> {
     this.setDefaults();
   }
 
-  componentWillUpdate() {
-    this.setDefaults();
+  componentWillUpdate(nextProps: Props) {
+    const { hiddenFields, defaultValues } = this.props;
+
+    if (
+      nextProps.hiddenFields !== hiddenFields ||
+      nextProps.defaultValues !== defaultValues
+    ) {
+      this.setDefaults();
+    }
   }
 
   setDefaults = () => {
