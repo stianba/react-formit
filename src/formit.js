@@ -50,6 +50,7 @@ type Props = {
   hiddenFields?: Array<HiddenField>,
   defaultValues?: Array<DefaultField>,
   headers?: Array<Header>,
+  credentials?: 'omit' | 'include' | 'same-origin',
   children: FormitInterface => React.Node
 };
 
@@ -131,7 +132,7 @@ class Formit extends React.Component<Props, State> {
   };
 
   submit: submit = async e => {
-    const { action, headers, responseAsJSON } = this.props;
+    const { action, headers, credentials, responseAsJSON } = this.props;
     const { posting, fields } = this.state;
 
     const formData = new FormData();
@@ -159,6 +160,7 @@ class Formit extends React.Component<Props, State> {
       const response = await fetch(action, {
         method: 'POST',
         headers: head,
+        credentials: credentials ? credentials : 'omit',
         body: formData
       });
 
