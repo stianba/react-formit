@@ -2,6 +2,8 @@
 import 'babel-polyfill';
 import * as React from 'react';
 
+type Method = 'post' | 'get';
+type Credentials = 'omit' | 'include' | 'same-origin';
 type Value = string | Blob;
 type ResponseData = null | string | {};
 type PostingError = null | string;
@@ -30,9 +32,6 @@ type Field = {
 type Header = {
   [key: string]: string
 };
-
-type Method = 'post' | 'get';
-type Credentials = 'omit' | 'include' | 'same-origin';
 
 type SubmitResponse = {
   action: string,
