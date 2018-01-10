@@ -1,11 +1,12 @@
 {
   "name": "react-formit",
-  "version": "0.2.5",
+  "version": "1.0.0",
   "description": "Super simple and super flexible React form.",
   "main": "dist/formit.js",
   "scripts": {
     "prepublish": "npm run build",
-    "build": "npm test && npm run build:clean && npm run build:dist && npm run build:flow",
+    "build":
+      "npm test && npm run build:clean && npm run build:dist && npm run build:flow",
     "build:clean": "rimraf dist",
     "build:dist": "babel -d dist src --ignore '**/__tests__/**'",
     "build:flow": "flow-copy-source -v -i '**/__tests__/**' src dist",
@@ -24,6 +25,7 @@
     "babel-core": "^6.26.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.24.1",
     "flow-copy-source": "^1.2.1",
