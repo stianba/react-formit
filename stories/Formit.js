@@ -2,12 +2,38 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 import Formit from '../src/formit';
 
+storiesOf('Formit', module).add('Bare minimum', () => (
+  <Formit action="/">
+    {({ onSubmit, setValue, getValue }) => (
+      <form onSubmit={onSubmit}>
+        <label htmlFor="username">Username:</label>
+        <input
+          type="text"
+          id="username"
+          onChange={e => setValue('username', e.target.value)}
+          value={getValue('username')}
+          required
+        />
+        <label htmlFor="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          onChange={e => setValue('password', e.target.value)}
+          value={getValue('password')}
+          required
+        />
+        <button type="submit">Submit</button>
+      </form>
+    )}
+  </Formit>
+));
+
 storiesOf('Formit', module).add('Full package', () => (
   <Formit
     action="/"
     defaultFields={[
       { name: 'username', value: 'Stian' },
-      { name: 'password', value: 'peking' }
+      { name: 'password', value: 'mightyPassword' }
     ]}
     credentials="same-origin"
     headers={[
@@ -57,6 +83,7 @@ storiesOf('Formit', module).add('Full package', () => (
           id="username"
           onChange={e => setValue('username', e.target.value)}
           value={getValue('username')}
+          required
         />
         <label htmlFor="password">Password:</label>
         <input
@@ -64,6 +91,7 @@ storiesOf('Formit', module).add('Full package', () => (
           id="password"
           onChange={e => setValue('password', e.target.value)}
           value={getValue('password')}
+          required
         />
         <button type="submit">Submit</button>
         <a onClick={clearValues}>Cancel</a>

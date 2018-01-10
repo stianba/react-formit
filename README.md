@@ -8,6 +8,42 @@ $ yarn add react-formit
 
 ## Usage
 
+### Bare minimum
+
+```javascript
+import Formit from 'react-formit';
+
+const App = () => (
+  <Formit action="/">
+    {({ onSubmit, setValue, getValue }) => (
+      <form onSubmit={onSubmit}>
+        <label htmlFor="username">Username:</label>
+        <input
+          type="text"
+          id="username"
+          onChange={e => setValue('username', e.target.value)}
+          value={getValue('username')}
+          required
+        />
+        <label htmlFor="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          onChange={e => setValue('password', e.target.value)}
+          value={getValue('password')}
+          required
+        />
+        <button type="submit">Submit</button>
+      </form>
+    )}
+  </Formit>
+);
+
+render(<App />, document.getElementById('app'));
+```
+
+### Full package
+
 ```javascript
 import Formit from 'react-formit';
 
@@ -16,7 +52,7 @@ const App = () => (
     action="/"
     defaultFields={[
       { name: 'username', value: 'Stian' },
-      { name: 'password', value: 'peking' }
+      { name: 'password', value: 'mightyPassword' }
     ]}
     credentials="same-origin"
     headers={[
@@ -66,6 +102,7 @@ const App = () => (
           id="username"
           onChange={e => setValue('username', e.target.value)}
           value={getValue('username')}
+          required
         />
         <label htmlFor="password">Password:</label>
         <input
@@ -73,6 +110,7 @@ const App = () => (
           id="password"
           onChange={e => setValue('password', e.target.value)}
           value={getValue('password')}
+          required
         />
         <button type="submit">Submit</button>
         <a onClick={clearValues}>Cancel</a>
