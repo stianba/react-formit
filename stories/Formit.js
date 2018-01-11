@@ -1,19 +1,8 @@
-# react-formit
+import React from 'react';
+import { storiesOf } from '@storybook/react';
+import Formit from '../src/formit';
 
-Super simple and super flexible React form.
-
-```
-$ yarn add react-formit
-```
-
-## Usage
-
-### Bare minimum
-
-```javascript
-import Formit from 'react-formit';
-
-const App = () => (
+storiesOf('Formit', module).add('Bare minimum', () => (
   <Formit action="/">
     {({ onSubmit, setValue, getValue }) => (
       <form onSubmit={onSubmit}>
@@ -37,17 +26,9 @@ const App = () => (
       </form>
     )}
   </Formit>
-);
+));
 
-render(<App />, document.getElementById('app'));
-```
-
-### Full package
-
-```javascript
-import Formit from 'react-formit';
-
-const App = () => (
+storiesOf('Formit', module).add('Full package', () => (
   <Formit
     action="/"
     defaultFields={[
@@ -120,7 +101,4 @@ const App = () => (
       </form>
     )}
   </Formit>
-);
-
-render(<App />, document.getElementById('app'));
-```
+));

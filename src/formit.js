@@ -2,40 +2,29 @@
 import 'babel-polyfill';
 import * as React from 'react';
 
+type Method = 'post' | 'get';
+type Credentials = 'omit' | 'include' | 'same-origin';
 type Value = string | Blob;
-type FieldError = null | string;
 type ResponseData = null | string | {};
 type PostingError = null | string;
 
 type submit = (e: Event) => Promise<boolean>;
-type setValue = (fieldName: string, value: Value) => boolean;
-type getValue = (fieldName: string) => Value;
-type getFieldError = (fieldName: string) => FieldError;
+type setValue = (name: string, value: Value) => boolean;
+type getValue = (name: string) => Value;
 type clearValues = () => boolean;
 
 type FormitInterface = {
   onSubmit: submit,
   setValue: setValue,
   getValue: getValue,
-  getFieldError: getFieldError,
   clearValues: clearValues,
   isPosting: boolean,
   postingError: PostingError,
+  response: Response | null,
   responseData: ResponseData
 };
 
 type Field = {
-  name: string,
-  value: Value,
-  error: FieldError
-};
-
-type HiddenField = {
-  name: string,
-  value: Value
-};
-
-type DefaultField = {
   name: string,
   value: Value
 };
@@ -44,115 +33,170 @@ type Header = {
   [key: string]: string
 };
 
+type SubmitResponse = {
+  action: string,
+  credentials: Credentials,
+  headers: Array<Header>,
+  fields: Array<Field>
+};
+
+type SuccessfulSubmitResponse = {
+  ...SubmitResponse,
+  response: Response,
+  responseData: ResponseData
+};
+
+type FailedSubmitResponse = {
+  ...SubmitResponse,
+  error: PostingError
+};
+
 type Props = {
   action: string,
+  credentials?: Credentials,
   responseAsJSON?: boolean,
-  hiddenFields?: Array<HiddenField>,
-  defaultValues?: Array<DefaultField>,
+  defaultFields?: Array<Field>,
   headers?: Array<Header>,
-  credentials?: 'omit' | 'include' | 'same-origin',
+  onValueSet?: Field => void,
+  onSuccessfulSubmit?: SuccessfulSubmitResponse => void,
+  onFailedSubmit?: FailedSubmitResponse => void,
   children: FormitInterface => React.Node
 };
 
 type State = {
   posting: boolean,
   fields: Array<Field>,
+  response: Response | null,
   responseData: ResponseData,
   postingError: PostingError
 };
 
 class Formit extends React.Component<Props, State> {
   defaultProps: {
-    hiddenFields: [],
+    credentials: 'omit',
+    defaultFields: [],
     responseAsJSON: false
   };
 
   state = {
     posting: false,
     fields: [],
+    response: null,
     responseData: null,
     postingError: null
   };
 
   componentWillMount() {
-    const { hiddenFields, defaultValues } = this.props;
-    this.setDefaults(hiddenFields, defaultValues);
+    const { defaultFields } = this.props;
+    this.setDefaultFields(defaultFields);
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    this.setDefaults(nextProps.hiddenFields, nextProps.defaultValues);
+    this.setDefaultFields(nextProps.defaultFields);
   }
 
-  setDefaults = (
-    hiddenFields?: Array<HiddenField>,
-    defaultValues?: Array<DefaultField>
-  ) => {
-    if (hiddenFields && hiddenFields.length > 0) {
-      const fields = hiddenFields.map(f =>
-        Object.assign({}, f, { error: null })
+  mergeFields = (oldFields: Array<Field>, newFields: Array<Field>) => {
+    const fields = [...oldFields];
+
+    newFields.forEach(newField => {
+      const existsIndex = fields.findIndex(
+        field => field.name === newField.name
       );
 
-      this.setState({ fields });
-    }
+      if (existsIndex > -1) {
+        fields[existsIndex].value = newField.value;
+      } else {
+        fields.push(newField);
+      }
+    });
 
-    if (defaultValues && defaultValues.length > 0) {
-      const fields = defaultValues.map(f =>
-        Object.assign({}, f, { error: null })
-      );
+    return fields;
+  };
 
-      this.setState({ fields });
+  setDefaultFields = (defaultFields?: Array<Field>) => {
+    const { fields } = this.state;
+
+    if (defaultFields && defaultFields.length > 0) {
+      const mergedFields = this.mergeFields(fields, defaultFields);
+
+      this.setState({
+        fields: mergedFields
+      });
     }
   };
 
-  setValue: setValue = (fieldName, value) => {
+  setValue: setValue = (name, value) => {
+    const { onValueSet } = this.props;
     const { posting, fields } = this.state;
-    if (posting) return false;
-    const existsIndex = fields.findIndex(f => f.name === fieldName);
 
-    if (existsIndex > -1) {
-      fields[existsIndex].value = value;
-      this.setState({ fields });
-      return true;
+    if (posting) {
+      return false;
+    }
+
+    const field = { name, value };
+    const mergedFields = this.mergeFields(fields, [field]);
+
+    this.setState({
+      fields: mergedFields
+    });
+
+    if (typeof onValueSet === 'function') {
+      onValueSet(field);
+    }
+
+    return true;
+  };
+
+  getValue: getValue = name => {
+    const { fields } = this.state;
+    const field = fields.find(f => f.name === name);
+    return field ? field.value : '';
+  };
+
+  clearValues: clearValues = () => {
+    const { posting } = this.state;
+
+    if (posting) {
+      return false;
     }
 
     this.setState({
-      fields: [...fields, { name: fieldName, value, error: null }]
+      fields: [],
+      postingError: null,
+      responseData: null
     });
 
     return true;
   };
 
-  getValue: getValue = fieldName => {
-    const { fields } = this.state;
-    const field = fields.find(f => f.name === fieldName);
-    return field ? field.value : '';
-  };
-
-  getFieldError: getFieldError = fieldName => {
-    const { fields } = this.state;
-    const field = fields.find(f => f.name === fieldName);
-    return field ? field.error : null;
-  };
-
-  clearValues: clearValues = () => {
-    const { posting } = this.state;
-    if (posting) return false;
-    this.setState({ fields: [], postingError: null, responseData: null });
-    return true;
-  };
-
   submit: submit = async e => {
-    const { action, headers, credentials, responseAsJSON } = this.props;
+    const {
+      action,
+      headers,
+      credentials,
+      responseAsJSON,
+      onSuccessfulSubmit,
+      onFailedSubmit
+    } = this.props;
+
     const { posting, fields } = this.state;
 
+    e.preventDefault();
+
+    const method = 'post';
     const formData = new FormData();
     const head = new Headers();
     let responseData: ResponseData;
 
-    e.preventDefault();
+    if (posting) {
+      return false;
+    }
 
-    if (posting) return false;
-    this.setState({ posting: true, postingError: null, responseData: null });
+    this.setState({
+      posting: true,
+      postingError: null,
+      responseData: null
+    });
 
     fields.forEach(f => {
       formData.append(f.name, f.value);
@@ -166,11 +210,19 @@ class Formit extends React.Component<Props, State> {
       });
     }
 
+    const responseCallbackData = {
+      method,
+      action,
+      credentials: credentials || 'omit',
+      headers: headers || [],
+      fields
+    };
+
     try {
       const response = await fetch(action, {
-        method: 'POST',
+        method,
         headers: head,
-        credentials: credentials ? credentials : 'omit',
+        credentials,
         body: formData
       });
 
@@ -185,11 +237,26 @@ class Formit extends React.Component<Props, State> {
         fields: [],
         responseData
       });
+
+      if (typeof onSuccessfulSubmit === 'function') {
+        onSuccessfulSubmit({
+          ...responseCallbackData,
+          response,
+          responseData
+        });
+      }
     } catch (error) {
       this.setState({
         posting: false,
         postingError: error
       });
+
+      if (typeof onFailedSubmit === 'function') {
+        onFailedSubmit({
+          ...responseCallbackData,
+          error
+        });
+      }
     }
 
     return true;
@@ -197,16 +264,16 @@ class Formit extends React.Component<Props, State> {
 
   render() {
     const { children } = this.props;
-    const { posting, postingError, responseData } = this.state;
+    const { posting, postingError, response, responseData } = this.state;
 
     return children({
       onSubmit: this.submit,
       setValue: this.setValue,
       getValue: this.getValue,
-      getFieldError: this.getFieldError,
       clearValues: this.clearValues,
       isPosting: posting,
       postingError,
+      response,
       responseData
     });
   }
@@ -215,11 +282,13 @@ class Formit extends React.Component<Props, State> {
 export default Formit;
 
 export type {
+  Method,
+  Credentials,
   Value,
-  FieldError,
   ResponseData,
   PostingError,
   FormitInterface,
   Field,
-  HiddenField
+  SuccessfulSubmitResponse,
+  FailedSubmitResponse
 };
