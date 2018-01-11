@@ -93,7 +93,9 @@ storiesOf('Formit', module).add('Full package', () => (
           value={getValue('password')}
           required
         />
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={isPosting}>
+          {isPosting ? 'Submitting...' : 'Submit'}
+        </button>
         <a onClick={clearValues}>Cancel</a>
         {responseData !== null && <p>{responseData.mySuccessMessage}</p>}
       </form>
