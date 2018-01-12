@@ -84,9 +84,11 @@ const App = () => (
       )
     }
     responseAsJSON
+    dontFlushFieldsOnSubmit
   >
     {({
       onSubmit,
+      setFields,
       setValue,
       getValue,
       clearValues,
@@ -110,6 +112,19 @@ const App = () => (
           id="password"
           onChange={e => setValue('password', e.target.value)}
           value={getValue('password')}
+          required
+        />
+        <label htmlFor="both">Set both:</label>
+        <input
+          type="text"
+          id="both"
+          onChange={e =>
+            setFields([
+              { name: 'username', value: e.target.value },
+              { name: 'password', value: e.target.value }
+            ])
+          }
+          value={getValue('username')}
           required
         />
         <button type="submit" disabled={isPosting}>

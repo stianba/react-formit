@@ -9,6 +9,7 @@ type ResponseData = null | string | {};
 type PostingError = null | string;
 
 type submit = (e: Event) => Promise<boolean>;
+type setFields = (newFields: Array<Field>) => boolean;
 type setValue = (name: string, value: Value) => boolean;
 type getValue = (name: string) => Value;
 type clearValues = () => boolean;
@@ -17,6 +18,7 @@ type FormitInterface = {
   onSubmit: submit,
   setValue: setValue,
   getValue: getValue,
+  setFields: setFields,
   clearValues: clearValues,
   isPosting: boolean,
   postingError: PostingError,
@@ -55,6 +57,7 @@ type Props = {
   action: string,
   credentials?: Credentials,
   responseAsJSON?: boolean,
+  dontFlushFieldsOnSubmit?: boolean,
   defaultFields?: Array<Field>,
   headers?: Array<Header>,
   onValueSet?: Field => void,
@@ -75,7 +78,8 @@ class Formit extends React.Component<Props, State> {
   defaultProps: {
     credentials: 'omit',
     defaultFields: [],
-    responseAsJSON: false
+    responseAsJSON: false,
+    dontFlushFieldsOnSubmit: false
   };
 
   state = {
@@ -123,6 +127,22 @@ class Formit extends React.Component<Props, State> {
         fields: mergedFields
       });
     }
+  };
+
+  setFields: setFields = newFields => {
+    const { posting, fields } = this.state;
+
+    if (posting) {
+      return false;
+    }
+
+    const mergedFields = this.mergeFields(fields, newFields);
+
+    this.setState({
+      fields: mergedFields
+    });
+
+    return true;
   };
 
   setValue: setValue = (name, value) => {
@@ -175,6 +195,7 @@ class Formit extends React.Component<Props, State> {
       headers,
       credentials,
       responseAsJSON,
+      dontFlushFieldsOnSubmit,
       onSuccessfulSubmit,
       onFailedSubmit
     } = this.props;
@@ -234,7 +255,7 @@ class Formit extends React.Component<Props, State> {
 
       this.setState({
         posting: false,
-        fields: [],
+        fields: dontFlushFieldsOnSubmit ? fields : [],
         responseData
       });
 
@@ -268,6 +289,7 @@ class Formit extends React.Component<Props, State> {
 
     return children({
       onSubmit: this.submit,
+      setFields: this.setFields,
       setValue: this.setValue,
       getValue: this.getValue,
       clearValues: this.clearValues,
