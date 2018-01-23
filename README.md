@@ -62,6 +62,13 @@ const App = () => (
       }
     ]}
     onValueSet={field => console.log(field.name, field.value)}
+    beforeSubmit={fields =>
+      window.confirm(
+        `Are you sure you want your username to be ${
+          fields.find(f => f.name === 'username').value
+        }?`
+      )
+    }
     onSuccessfulSubmit={data =>
       console.log(
         data.method,

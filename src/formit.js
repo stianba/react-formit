@@ -61,6 +61,7 @@ type Props = {
   defaultFields?: Array<Field>,
   headers?: Array<Header>,
   onValueSet?: Field => void,
+  beforeSubmit?: (Array<Field>) => boolean,
   onSuccessfulSubmit?: SuccessfulSubmitResponse => void,
   onFailedSubmit?: FailedSubmitResponse => void,
   children: FormitInterface => React.Node
@@ -196,6 +197,7 @@ class Formit extends React.Component<Props, State> {
       credentials,
       responseAsJSON,
       dontFlushFieldsOnSubmit,
+      beforeSubmit,
       onSuccessfulSubmit,
       onFailedSubmit
     } = this.props;
@@ -203,6 +205,12 @@ class Formit extends React.Component<Props, State> {
     const { posting, fields } = this.state;
 
     e.preventDefault();
+
+    if (typeof beforeSubmit === 'function') {
+      if (!beforeSubmit(fields)) {
+        return false;
+      }
+    }
 
     const method = 'post';
     const formData = new FormData();
