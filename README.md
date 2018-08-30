@@ -50,6 +50,7 @@ import Formit from 'react-formit';
 const App = () => (
   <Formit
     action="/"
+    method="post" // default
     defaultFields={[
       { name: 'username', value: 'Stian' },
       { name: 'password', value: 'mightyPassword' }

@@ -2,7 +2,7 @@
 import 'babel-polyfill';
 import * as React from 'react';
 
-type Method = 'post' | 'get';
+type Method = 'post' | 'get' | 'patch' | 'put' | 'delete';
 type Credentials = 'omit' | 'include' | 'same-origin';
 type Value = string | Blob;
 type ResponseData = null | string | {};
@@ -56,6 +56,7 @@ type FailedSubmitResponse = {
 type Props = {
   action: string,
   credentials?: Credentials,
+  method?: Method,
   responseAsJSON?: boolean,
   dontFlushFieldsOnSubmit?: boolean,
   defaultFields?: Array<Field>,
@@ -201,6 +202,7 @@ class Formit extends React.Component<Props, State> {
       onSuccessfulSubmit,
       onFailedSubmit
     } = this.props;
+    let { method } = this.props;
 
     const { posting, fields } = this.state;
 
@@ -212,7 +214,7 @@ class Formit extends React.Component<Props, State> {
       }
     }
 
-    const method = 'post';
+    method = method || 'post';
     const formData = new FormData();
     const head = new Headers();
     let responseData: ResponseData;
