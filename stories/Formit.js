@@ -31,7 +31,7 @@ storiesOf('Formit', module).add('Bare minimum', () => (
 storiesOf('Formit', module).add('Full package', () => (
   <Formit
     action="/"
-    method="post" // default
+    method="POST" // default
     defaultFields={[
       { name: 'username', value: 'Stian' },
       { name: 'password', value: 'mightyPassword' }
