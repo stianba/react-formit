@@ -214,7 +214,7 @@ class Formit extends React.Component<Props, State> {
       }
     }
 
-    method = method || 'post';
+    method = method ? method.toUpperCase() : 'POST';
     const formData = new FormData();
     const head = new Headers();
     let responseData: ResponseData;
