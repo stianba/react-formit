@@ -257,6 +257,12 @@ class Formit extends React.Component<Props, State> {
         body: formData
       });
 
+      const status = response.status.toString();
+
+      if (status.charAt(0) !== '2') {
+        throw response;
+      }
+
       if (responseAsJSON) {
         responseData = await response.json();
       } else {
